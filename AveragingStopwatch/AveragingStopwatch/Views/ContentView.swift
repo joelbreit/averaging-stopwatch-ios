@@ -63,20 +63,6 @@ struct ContentView: View {
             .frame(height: 120)
             .padding(.horizontal, Theme.contentMargin)
 
-            if viewModel.totalElapsedTime > 0 {
-                HStack(spacing: 4) {
-                    Text("Lap \(viewModel.laps.count + 1):")
-                        .foregroundColor(.appSecondaryText)
-                    Text(viewModel.formattedCurrentLapTime)
-                        .monospacedDigit()
-                        .foregroundColor(.appSecondaryText)
-                }
-                .font(Theme.Typography.currentLapTimer)
-                .frame(height: 32)
-            } else {
-                Spacer()
-                    .frame(height: 32)
-            }
         }
         .padding(.top, Theme.sectionSpacing)
     }
@@ -89,9 +75,8 @@ struct ContentView: View {
                 HStack(spacing: Theme.sectionSpacing) {
                     statisticItem(label: "Avg Lap", value: avgLap)
 
-                    if let overallAvg = viewModel.formattedOverallAverage,
-                       viewModel.currentLapTime > 0 {
-                        statisticItem(label: "Overall", value: overallAvg)
+                    if let overallAvg = viewModel.formattedOverallAverage {
+                        statisticItem(label: "Overall Avg", value: overallAvg)
                     }
                 }
                 .frame(height: 48)
@@ -157,6 +142,19 @@ struct ContentView: View {
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
             } else {
+                // Current lap (only show when running or paused with uncommitted lap time)
+                if viewModel.isRunning || viewModel.currentLapTime > 0 {
+                    CurrentLapRowView(
+                        lapNumber: viewModel.laps.count + 1,
+                        lapTime: viewModel.formattedCurrentLapTime,
+                        totalTime: viewModel.formattedTotalTime
+                    )
+                    .listRowBackground(Color.appSurface)
+                    .listRowSeparator(.visible, edges: .bottom)
+                    .listRowSeparatorTint(Color.appSecondaryText.opacity(0.2))
+                }
+
+                // Completed laps
                 ForEach(Array(viewModel.laps.enumerated()), id: \.element.id) { index, lap in
                     LapRowView(
                         lap: lap,

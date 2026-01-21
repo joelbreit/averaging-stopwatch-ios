@@ -55,6 +55,42 @@ struct LapRowView: View {
     }
 }
 
+struct CurrentLapRowView: View {
+    let lapNumber: Int
+    let lapTime: String
+    let totalTime: String
+
+    var body: some View {
+        HStack {
+            // Lap number - left aligned
+            Text("Lap \(lapNumber)")
+                .font(Theme.Typography.lapNumber)
+                .foregroundColor(.appSecondaryText)
+                .frame(width: 70, alignment: .leading)
+
+            Spacer()
+
+            // Lap duration - center
+            Text(lapTime)
+                .font(Theme.Typography.lapTimes)
+                .foregroundColor(.appPrimaryText)
+                .monospacedDigit()
+
+            Spacer()
+
+            // Cumulative time - right aligned
+            Text(totalTime)
+                .font(Theme.Typography.lapTimes)
+                .foregroundColor(.appSecondaryText)
+                .monospacedDigit()
+        }
+        .padding(.vertical, Theme.componentSpacing)
+        .padding(.horizontal, Theme.baseUnit / 2)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Current lap \(lapNumber), time \(lapTime), total \(totalTime)")
+    }
+}
+
 #Preview {
     List {
         LapRowView(
